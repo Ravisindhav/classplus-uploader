@@ -50,27 +50,28 @@ async def account_login(bot: Client, m: Message):
     input: Message = await bot.listen(editable.chat.id)
     if input.document:
         x = await input.download()
-        await input.delete(True)
-        file_name, ext = os.path.splitext(os.path.basename(x))
-        credit = f"[{m.from_user.first_name}](tg://user?id={m.from_user.id})"
-        path = f"./downloads/{m.chat.id}"
+await input.delete(True)
+file_name, ext = os.path.splitext(os.path.basename(x))
+credit = f"[{m.from_user.first_name}](tg://user?id={m.from_user.id})"
+path = f"./downloads/{m.chat.id}"
 
-        try:
-            with open(x, "r") as f:
-                content = f.read()
-            content = content.split("\n")
-            links = []
-            for line in content:
-                line = line.strip()
-                if "://" in line:
-                    part = line.split("://", 1)
-                    if len(part) == 2:
-                        links.append(part)
-            os.remove(x)
-        except Exception as e:
-            await m.reply_text(f"❌ Invalid file input:\n`{str(e)}`")
-            os.remove(x)
-            return
+try:
+    with open(x, "r") as f:
+        content = f.read()
+        content = content.split("\n")
+        links = []
+        for line in content:
+            line = line.strip()
+            if "://" in line:
+                part = line.split("://", 1)
+                if len(part) == 2:
+                    links.append(part)
+    os.remove(x)
+
+except Exception as e:
+    await m.reply_text(f"❌ Invalid file input:\n`{str(e)}`")
+    os.remove(x)
+    return
         except Exception as e:
             await m.reply_text(f"❌ Invalid file input:\n`{str(e)}`")
             os.remove(x)
