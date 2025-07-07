@@ -71,6 +71,10 @@ async def account_login(bot: Client, m: Message):
             await m.reply_text(f"❌ Invalid file input:\n`{str(e)}`")
             os.remove(x)
             return
+        except Exception as e:
+            await m.reply_text(f"❌ Invalid file input:\n`{str(e)}`")
+            os.remove(x)
+            return
 
         except:
             await m.reply_text("Invalid file input.🥲")
