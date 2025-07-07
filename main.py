@@ -3,12 +3,9 @@ import requests
 import json
 import subprocess
 from pyrogram import Client, filters
-from pyrogram.types.messages_and_media import message
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, User
 from pyrogram.errors import FloodWait
 from pyromod import listen
-from pyrogram.types import Message
-from pyrogram import Client, filters
 from p_bar import progress_bar
 from subprocess import getstatusoutput
 from aiohttp import ClientSession
@@ -16,7 +13,6 @@ import helper
 from logger import logging
 import time
 import asyncio
-from pyrogram.types import User, Message
 from config import api_id, api_hash, bot_token, auth_users, sudo_users
 import sys
 import re
@@ -36,20 +32,21 @@ async def cancel_command(bot: Client, m: Message):
         return
     await m.reply_text("**STOPPED**🛑🛑", True)
     os.execl(sys.executable, sys.executable, *sys.argv)
+
 @bot.on_message(filters.command("start"))
 async def test_debug_start(bot: Client, m: Message):
     print(f"[DEBUG] /start received from {m.from_user.id if m.from_user else 'unknown'}")
     await m.reply("✅ Bot is alive and received your /start command.")
-    
+
 @bot.on_message(filters.command(["start"]))
 async def account_login(bot: Client, m: Message):
-    
+
     user_id = m.from_user.id if m.from_user is not None else None
 
     if user_id not in auth_users and user_id not in sudo_users:
         await m.reply(f"**You Are Not Subscribed To This Bot\nContact - @Mahagoraxyz**", quote=True)
         return
-        
+
     editable = await m.reply_text(f"**Hey [{m.from_user.first_name}](tg://user?id={m.from_user.id})\nSend txt file**")
     input: Message = await bot.listen(editable.chat.id)
     if input.document:
@@ -67,7 +64,7 @@ async def account_login(bot: Client, m: Message):
             for i in content:
                 links.append(i.split("://", 1))
             os.remove(x)
-            
+
         except:
             await m.reply_text("Invalid file input.🥲")
             os.remove(x)
@@ -78,7 +75,7 @@ async def account_login(bot: Client, m: Message):
         links = []
         for i in content:
             links.append(i.split("://", 1))
-   
+
     await editable.edit(f"Total links found are **{len(links)}**\n\nSend From where you want to download initial is **1**")
     input0: Message = await bot.listen(editable.chat.id)
     raw_text = input0.text
@@ -109,12 +106,12 @@ async def account_login(bot: Client, m: Message):
         elif raw_text2 == "720":
             res = "1280x720"
         elif raw_text2 == "1080":
-            res = "1920x1080" 
-        else: 
+            res = "1920x1080"
+        else:
             res = "UN"
     except Exception:
-            res = "UN"
-    
+        res = "UN"
+
     await editable.edit("**Enter Your Name or send `de` for use default**")
     input3: Message = await bot.listen(editable.chat.id)
     raw_text3 = input3.text
@@ -130,7 +127,7 @@ async def account_login(bot: Client, m: Message):
     await input4.delete(True)
 
     await editable.edit("Now send the **Thumb url**\nEg : ```https://telegra.ph/file/0633f8b6a6f110d34f044.jpg```\n\nor Send No`")
-    input6 = message = await bot.listen(editable.chat.id)
+    input6 = await bot.listen(editable.chat.id)
     raw_text6 = input6.text
     await input6.delete(True)
     await editable.delete()
@@ -140,7 +137,7 @@ async def account_login(bot: Client, m: Message):
         getstatusoutput(f"wget '{thumb}' -O 'thumb.jpg'")
         thumb = "thumb.jpg"
     else:
-        thumb == "No"
+        thumb = "No"
 
     if len(links) == 1:
         count = 1
@@ -150,7 +147,7 @@ async def account_login(bot: Client, m: Message):
     try:
         for i in range(count - 1, len(links)):
 
-            V = links[i][1].replace("file/d/","uc?export=download&id=").replace("www.youtube-nocookie.com/embed", "youtu.be").replace("?modestbranding=1", "").replace("/view?usp=sharing","")
+            V = links[i][1].replace("file/d/", "uc?export=download&id=").replace("www.youtube-nocookie.com/embed", "youtu.be").replace("?modestbranding=1", "").replace("/view?usp=sharing", "")
             url = "https://" + V
 
             if "visionias" in url:
@@ -162,7 +159,7 @@ async def account_login(bot: Client, m: Message):
             elif 'classplusapp' in url or "testbook.com" in url or "classplusapp.com/drm" in url or "media-cdn.classplusapp.com/drm" in url:
                 headers = {
                     'host': 'api.classplusapp.com',
-                    'x-access-token': 'eyJjb3Vyc2VJZCI6IjQ1NjY4NyIsInR1dG9ySWQiOm51bGwsIm9yZ0lkIjo0ODA2MTksImNhdGVnb3J5SWQiOm51bGx9',    
+                    'x-access-token': 'eyJjb3Vyc2VJZCI6IjQ1NjY4NyIsInR1dG9ySWQiOm51bGwsIm9yZ0lkIjo0ODA2MTksImNhdGVnb3J5SWQiOm51bGx9',
                     'accept-language': 'EN',
                     'api-version': '18',
                     'app-version': '1.4.73.2',
@@ -176,7 +173,7 @@ async def account_login(bot: Client, m: Message):
                     'webengage-luid': '00000187-6fe4-5d41-a530-26186858be4c',
                     'accept-encoding': 'gzip'
                 }
-                
+
                 url = url.replace('https://tencdn.classplusapp.com/', 'https://media-cdn.classplusapp.com/tencent/')
 
                 params = {
@@ -184,19 +181,18 @@ async def account_login(bot: Client, m: Message):
                 }
 
                 res = requests.get("https://api.classplusapp.com/cams/uploader/video/jw-signed-url", params=params, headers=headers).json()
-                
+
                 if "testbook.com" in url or "classplusapp.com/drm" in url or "media-cdn.classplusapp.com/drm" in url:
                     url = res['drmUrls']['manifestUrl']
-                    
                 else:
                     url = res["url"]
 
             elif "d1d34p8vz63oiq" in url or "sec1.pw.live" in url:
                 url = f"https://anonymouspwplayer-b99f57957198.herokuapp.com/pw?url={url}?token={pw_token}"
-                
+
             else:
                 url = url
-                
+
             name1 = links[i][0].replace("\t", "").replace(":", "").replace("/", "").replace("+", "").replace("#", "").replace("|", "").replace("@", "").replace("*", "").replace(".", "").replace("https", "").replace("http", "").strip()
             name = f'{str(count).zfill(3)}) {name1[:60]}'
 
@@ -210,31 +206,31 @@ async def account_login(bot: Client, m: Message):
             else:
                 cmd = f'yt-dlp -f "{ytf}" "{url}" -o "{name}.mp4"'
 
-            try:                               
+            try:
                 cc = f'** {str(count).zfill(3)}.** {name1}\n**Batch Name :** {b_name}\n\n**Downloaded by : {CR}**'
                 cc1 = f'** {str(count).zfill(3)}.** {name1}\n**Batch Name :**{b_name}\n\n**Downloaded by : {CR}**'
                 if "drive" in url:
                     try:
                         ka = await helper.download(url, name)
-                        copy = await bot.send_document(chat_id=m.chat.id,document=ka, caption=cc1)
-                        count+=1
+                        copy = await bot.send_document(chat_id=m.chat.id, document=ka, caption=cc1)
+                        count += 1
                         os.remove(ka)
-                        time.sleep(1)
+                        await asyncio.sleep(1)
                     except FloodWait as e:
                         await m.reply_text(str(e))
-                        time.sleep(e.x)
+                        await asyncio.sleep(e.x)
                         continue
                 elif ".pdf" in url:
                     try:
                         cmd = f'yt-dlp -o "{name}.pdf" "{url}"'
                         download_cmd = f"{cmd} -R 25 --fragment-retries 25"
                         os.system(download_cmd)
-                        copy = await bot.send_document(chat_id=m.chat.id,document=f'{name}.pdf', caption=cc1)
+                        copy = await bot.send_document(chat_id=m.chat.id, document=f'{name}.pdf', caption=cc1)
                         count += 1
                         os.remove(f'{name}.pdf')
                     except FloodWait as e:
                         await m.reply_text(str(e))
-                        time.sleep(e.x)
+                        await asyncio.sleep(e.x)
                         continue
                 else:
                     prog = await m.reply_text(f"**Downloading:-**\n\n** Video Name :-** `{name}\nQuality - {raw_text2}`\n**link:**`{url}`**")
@@ -253,6 +249,5 @@ async def account_login(bot: Client, m: Message):
         await m.reply_text(str(e))
     else:
         await m.reply_text("🔰Done Boss🔰")
-
 
 bot.run()
