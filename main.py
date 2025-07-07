@@ -18,6 +18,8 @@ import sys
 import re
 import os
 
+print("🚀 Bot starting on Heroku...")
+
 bot = Client(
     "bot",
     api_id=api_id,
@@ -33,13 +35,10 @@ async def cancel_command(bot: Client, m: Message):
     await m.reply_text("**STOPPED**🛑🛑", True)
     os.execl(sys.executable, sys.executable, *sys.argv)
 
-@bot.on_message(filters.command("start"))
-async def test_debug_start(bot: Client, m: Message):
-    print(f"[DEBUG] /start received from {m.from_user.id if m.from_user else 'unknown'}")
-    await m.reply("✅ Bot is alive and received your /start command.")
-
 @bot.on_message(filters.command(["start"]))
 async def account_login(bot: Client, m: Message):
+
+    print(f"[DEBUG] /start received from {m.from_user.id if m.from_user else 'unknown'}")
 
     user_id = m.from_user.id if m.from_user is not None else None
 
