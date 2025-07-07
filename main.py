@@ -58,14 +58,19 @@ async def account_login(bot: Client, m: Message):
         try:
             with open(x, "r") as f:
                 content = f.read()
+            content = content.split("\n")
             links = []
-for line in content:
-    line = line.strip()
-    if "://" in line:
-        part = line.split("://", 1)
-        if len(part) == 2:
-            links.append(part)
+            for line in content:
+                line = line.strip()
+                if "://" in line:
+                    part = line.split("://", 1)
+                    if len(part) == 2:
+                        links.append(part)
             os.remove(x)
+        except Exception as e:
+            await m.reply_text(f"❌ Invalid file input:\n`{str(e)}`")
+            os.remove(x)
+            return
 
         except:
             await m.reply_text("Invalid file input.🥲")
