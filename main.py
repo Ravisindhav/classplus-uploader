@@ -76,9 +76,9 @@ async def account_login(bot: Client, m: Message):
             links.append(i.split("://", 1))
 
     if input is None or (not input.text and not input.document):
-    await m.reply_text("⚠️ आपने कोई फ़ाइल या मैसेज नहीं भेजा। कृपया .txt फ़ाइल या लिंक भेजें।")
-    return
-    
+        await m.reply_text("⚠️ आपने कोई फ़ाइल या मैसेज नहीं भेजा। कृपया .txt फ़ाइल या लिंक भेजें।")
+        return
+
     await editable.edit(f"Total links found are **{len(links)}**\n\nSend From where you want to download initial is **1**")
     input0: Message = await bot.listen(editable.chat.id)
     raw_text = input0.text
