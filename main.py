@@ -68,10 +68,6 @@ try:
                     links.append(part)
     os.remove(x)
 
-except Exception as e:
-    await m.reply_text(f"❌ Invalid file input:\n`{str(e)}`")
-    os.remove(x)
-    return
         except Exception as e:
             await m.reply_text(f"❌ Invalid file input:\n`{str(e)}`")
             os.remove(x)
